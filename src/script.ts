@@ -43,9 +43,9 @@ renderer.setSize(sizes.width, sizes.height)
 const clock = new THREE.Clock()
 
 
-function circleRevolutionAnimation(object:THREE.Object3D, eslapedTime: number, revolutionPerSecond:number) {
-    object.position.y = Math.sin(eslapedTime*revolutionPerSecond) // Trig UP and DOWN
-    object.position.x = Math.cos(eslapedTime*revolutionPerSecond )// Trig LEFT and RIGHT
+function circleRevolutionAnimation(object:THREE.Object3D, eslapedTime: number, speed:number) {
+    object.position.y = Math.sin(eslapedTime*speed) // Trig UP and DOWN
+    object.position.x = Math.cos(eslapedTime*speed )// Trig LEFT and RIGHT
 }
 function revolutionPerSecond(object:THREE.Object3D, eslapedTime: number,revolutionPerSecond:number) {
     object.rotation.y = eslapedTime * Math.PI * 2 * revolutionPerSecond
@@ -78,7 +78,7 @@ const onTick = () => {
     camera.lookAt(mesh.position)
     renderer.render(scene, camera)
 }
-tick(onTick)()
+tick(onTick,true)()
 
 
 
