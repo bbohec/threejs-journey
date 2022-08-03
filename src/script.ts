@@ -1,7 +1,7 @@
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { tick } from './tick/tick'
+import { ticker } from "./tick/ticker"
 
 
 
@@ -92,4 +92,4 @@ const onTick = () => {
     // Render
     renderer.render(scene, camera)
 }
-tick(onTick,false)()
+ticker(onTick,true)()
