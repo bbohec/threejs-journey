@@ -1,9 +1,11 @@
 import { logPerf } from './logPerf';
-import { renderer, scene, camera } from './script';
-
-export const tick = (currentTimeStamp: DOMHighResTimeStamp = 0) => {
-    window.requestAnimationFrame(tick);
+export const tick = (onTick:()=>void) => (currentTimeStamp: DOMHighResTimeStamp = 0) => {
     const start: DOMHighResTimeStamp = performance.now();
-    renderer.render(scene, camera);
+    window.requestAnimationFrame(tick(onTick));
+    onTick();
     logPerf(start, currentTimeStamp);
 };
+
+
+
+

@@ -34,6 +34,9 @@ export const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 
 
-tick()
+const onTick = () => {
+    renderer.render(scene, camera)
+}
+tick(onTick)()
 
 
