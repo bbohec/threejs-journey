@@ -92,4 +92,4 @@ const onTick = () => {
     // Render
     renderer.render(scene, camera)
 }
-ticker(onTick,true)()
+ticker(onTick,undefined,true)()
