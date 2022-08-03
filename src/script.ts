@@ -32,11 +32,17 @@ export const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
 renderer.setSize(sizes.width, sizes.height)
-
+const animateObjects = () => {
+    const tick = Date.now()
+    mesh.position.x += 0.01
+    mesh.position.y += 0.01
+    mesh.rotation.y += 0.01
+}
 
 const onTick = () => {
+    animateObjects()
     renderer.render(scene, camera)
 }
-tick(onTick)()
+tick(onTick,true)()
 
 
