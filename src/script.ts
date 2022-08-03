@@ -1,12 +1,13 @@
 import './style.css'
 import * as THREE from 'three'
+import { tick } from './tick'
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 if (!canvas) throw new Error('Canvas not found')
 
 // Scene
-const scene = new THREE.Scene()
+export const scene = new THREE.Scene()
 
 
 // Object
@@ -22,13 +23,17 @@ const sizes = {
 }
 
 // Camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
+export const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
 camera.position.z = 3
 scene.add(camera)
 
 // Renderer
-const renderer = new THREE.WebGLRenderer({
+export const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
 renderer.setSize(sizes.width, sizes.height)
-renderer.render(scene, camera)
+
+
+tick()
+
+
