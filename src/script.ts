@@ -27,47 +27,34 @@ if (!canvas) throw new Error('Canvas not found')
 // Scene
 const scene = new THREE.Scene()
 
+// Object
+const geometry = new THREE.BoxGeometry(1, 1, 1)
+const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+const mesh = new THREE.Mesh(geometry, material)
+scene.add(mesh)
+
 // Sizes
 const sizes = {
     width: window.innerWidth ,
     height: window.innerHeight,
 }
-window.addEventListener('resize',()=>{
+
+window.addEventListener('resize', () =>
+{
     // Update sizes
     sizes.width = window.innerWidth
     sizes.height = window.innerHeight
-    
+
     // Update camera
     camera.aspect = sizes.width / sizes.height
     camera.updateProjectionMatrix()
 
     // Update renderer
     renderer.setSize(sizes.width, sizes.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2) )
-})
-window.addEventListener('dblclick',()=>{
-    const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement
-    if(!fullscreenElement){
-        if(canvas.requestFullscreen) canvas.requestFullscreen()
-        if(canvas.webkitRequestFullscreen) canvas.webkitRequestFullscreen()
-    } else {
-        
-        if(document.exitFullscreen) document.exitFullscreen()
-        if(document.webkitExitFullscreen) document.webkitExitFullscreen()
-    }
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
 
-// Object
-const mesh = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1, 5, 5, 5),
-    new THREE.MeshBasicMaterial({ color: 0xff0000 })
-)
-scene.add(mesh)
-
-/**
- * Camera
- */
-// Base camera
+// Camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.z = 3
 scene.add(camera)
@@ -76,30 +63,21 @@ scene.add(camera)
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
 
-/**
- * Renderer
- */
+// Renderer
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
 renderer.setSize(sizes.width, sizes.height)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-/**
- * Animate
- */
-const clock = new THREE.Clock()
+// Animate
 
 const tick = () =>
 {
-    const elapsedTime = clock.getElapsedTime()
-
     // Update controls
     controls.update()
-
     // Render
     renderer.render(scene, camera)
-
-
 }
 
 ticker(tick)()
