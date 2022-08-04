@@ -2,7 +2,22 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { ticker } from "./tick/ticker"
-
+declare global {
+    interface Document {
+      mozCancelFullScreen?: () => Promise<void>;
+      msExitFullscreen?: () => Promise<void>;
+      webkitExitFullscreen?: () => Promise<void>;
+      mozFullScreenElement?: Element;
+      msFullscreenElement?: Element;
+      webkitFullscreenElement?: Element;
+    }
+  
+    interface HTMLElement {
+      msRequestFullscreen?: () => Promise<void>;
+      mozRequestFullscreen?: () => Promise<void>;
+      webkitRequestFullscreen?: () => Promise<void>;
+    }
+  }
 
 // Canvas
 const canvas:HTMLElement|null = document.querySelector('canvas.webgl')
@@ -14,9 +29,33 @@ const scene = new THREE.Scene()
 
 // Sizes
 const sizes = {
-    width: 800,
-    height: 600
+    width: window.innerWidth ,
+    height: window.innerHeight,
 }
+window.addEventListener('resize',()=>{
+    // Update sizes
+    sizes.width = window.innerWidth
+    sizes.height = window.innerHeight
+    
+    // Update camera
+    camera.aspect = sizes.width / sizes.height
+    camera.updateProjectionMatrix()
+
+    // Update renderer
+    renderer.setSize(sizes.width, sizes.height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2) )
+})
+window.addEventListener('dblclick',()=>{
+    const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement
+    if(!fullscreenElement){
+        if(canvas.requestFullscreen) canvas.requestFullscreen()
+        if(canvas.webkitRequestFullscreen) canvas.webkitRequestFullscreen()
+    } else {
+        
+        if(document.exitFullscreen) document.exitFullscreen()
+        if(document.webkitExitFullscreen) document.webkitExitFullscreen()
+    }
+})
 
 // Object
 const mesh = new THREE.Mesh(
