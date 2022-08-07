@@ -28,8 +28,20 @@ if (!canvas) throw new Error('Canvas not found')
 const scene = new THREE.Scene()
 
 // Object
-const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+//const geometry = new THREE.BoxGeometry(1, 1, 1,2,2,2)
+const geometry = new THREE.BufferGeometry()
+const count = 50
+const positions = new Float32Array(count * 3*3)
+for (let i = 0; i < count*3*3; i++) {
+    positions[i] = Math.random() -0.5
+}
+
+
+const positionsAttribute = new THREE.BufferAttribute(positions, 3)
+
+geometry.setAttribute('position', positionsAttribute)
+
+const material = new THREE.MeshBasicMaterial({ color: 0xff0000 , wireframe: true})
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
 
@@ -39,8 +51,7 @@ const sizes = {
     height: window.innerHeight,
 }
 
-window.addEventListener('resize', () =>
-{
+window.addEventListener('resize', () =>{
     // Update sizes
     sizes.width = window.innerWidth
     sizes.height = window.innerHeight
