@@ -1,7 +1,16 @@
 import './style.css'
 import * as THREE from 'three'
+import * as dat from 'lil-gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { ticker } from "./tick/ticker"
+import gsap from 'gsap'
+
+/**
+ * Debug
+ */
+const gui = new dat.GUI({title: 'Debug'})
+
+
 declare global {
     interface Document {
       mozCancelFullScreen?: () => Promise<void>;
@@ -19,39 +28,62 @@ declare global {
     }
   }
 
+
+/**
+ * Base
+ */
+
 // Canvas
 const canvas:HTMLElement|null = document.querySelector('canvas.webgl')
 if (!canvas) throw new Error('Canvas not found')
 
-
 // Scene
 const scene = new THREE.Scene()
 
-// Object
-//const geometry = new THREE.BoxGeometry(1, 1, 1,2,2,2)
-const geometry = new THREE.BufferGeometry()
-const count = 50
-const positions = new Float32Array(count * 3*3)
-for (let i = 0; i < count*3*3; i++) {
-    positions[i] = Math.random() -0.5
-}
-
-
-const positionsAttribute = new THREE.BufferAttribute(positions, 3)
-
-geometry.setAttribute('position', positionsAttribute)
-
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 , wireframe: true})
+/**
+ * Object
+ */
+const geometry = new THREE.BoxGeometry(1, 1, 1)
+const material = new THREE.MeshBasicMaterial({ color: 0xff0000})
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
+gui
+  .add(mesh.position, 'y')
+  .min(-3)
+  .max(3)
+  .step(0.01)
+  .name('elevation')
+gui.add(mesh,'visible').name('visible')
+gui.add(material, 'wireframe').name('wireframe')
+gui.addColor(material, 'color').name('color')
 
-// Sizes
-const sizes = {
-    width: window.innerWidth ,
-    height: window.innerHeight,
+const parameters = {
+  color:0xff0000,
+  spin:() => {
+    gsap.to(mesh.rotation, {
+      y: mesh.rotation.y+10,
+      duration: 1,
+    })
+  }
 }
 
-window.addEventListener('resize', () =>{
+gui
+  .addColor(parameters, 'color')
+  .onChange(()=> {
+    material.color.set(parameters.color)
+  })
+gui.add(parameters, 'spin').name('spin')
+
+/**
+ * Sizes
+ */
+const sizes = {
+    width: window.innerWidth,
+    height: window.innerHeight
+}
+
+window.addEventListener('resize', () =>
+{
     // Update sizes
     sizes.width = window.innerWidth
     sizes.height = window.innerHeight
@@ -64,24 +96,36 @@ window.addEventListener('resize', () =>{
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
+window.addEventListener('keydown', (e) =>{
+  if (e.key === 'h') {
+    gui._hidden ? gui.show() : gui.hide()
+  }
+})
 
-// Camera
+
+/**
+ * Camera
+ */
+// Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.z = 3
 scene.add(camera)
-
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
 
-// Renderer
+/**
+ * Renderer
+ */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
+    canvas: canvas,
+    //antialias: true
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-
-// Animate
+/**
+ * Animate
+ */
 
 const tick = () =>
 {
