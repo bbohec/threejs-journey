@@ -44,35 +44,9 @@ const scene = new THREE.Scene()
  * Object
  */
 const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000})
+const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
-gui
-  .add(mesh.position, 'y')
-  .min(-3)
-  .max(3)
-  .step(0.01)
-  .name('elevation')
-gui.add(mesh,'visible').name('visible')
-gui.add(material, 'wireframe').name('wireframe')
-gui.addColor(material, 'color').name('color')
-
-const parameters = {
-  color:0xff0000,
-  spin:() => {
-    gsap.to(mesh.rotation, {
-      y: mesh.rotation.y+10,
-      duration: 1,
-    })
-  }
-}
-
-gui
-  .addColor(parameters, 'color')
-  .onChange(()=> {
-    material.color.set(parameters.color)
-  })
-gui.add(parameters, 'spin').name('spin')
 
 /**
  * Sizes
@@ -96,20 +70,17 @@ window.addEventListener('resize', () =>
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
-window.addEventListener('keydown', (e) =>{
-  if (e.key === 'h') {
-    gui._hidden ? gui.show() : gui.hide()
-  }
-})
-
 
 /**
  * Camera
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.z = 3
+camera.position.x = 1
+camera.position.y = 1
+camera.position.z = 1
 scene.add(camera)
+
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
@@ -118,8 +89,7 @@ controls.enableDamping = true
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas,
-    //antialias: true
+    canvas: canvas
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
