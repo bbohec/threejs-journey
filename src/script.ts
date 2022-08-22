@@ -1,47 +1,7 @@
 import './style.css'
 import * as THREE from 'three'
-import * as dat from 'lil-gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { ticker } from "./tick/ticker"
-import gsap from 'gsap'
-
-/**
- * Textures
- */
-const baseUrl = import.meta.url
-const loadingManager = new THREE.LoadingManager(
-    () => { console.log('All resources loaded') },
-    (url, loaded, total) => { console.log(`${loaded/total*100}%`) },
-    (url) => { console.log(`ERROR loading ${url}`) }
-)
-const textureLoader = new THREE.TextureLoader(loadingManager)
-// const alphaTexture = textureLoader.load(new URL('/textures/door/alpha.jpg', baseUrl).href)
-// const ambientOcclusionTexture = textureLoader.load(new URL('/textures/door/ambientOcclusion.jpg', baseUrl).href)
-const colorTexture = textureLoader.load(new URL('/textures/minecraft.png', baseUrl).href)
-// const heightTexture = textureLoader.load(new URL('/textures/door/height.jpg', baseUrl).href)
-// const metalnessTexture = textureLoader.load(new URL('/textures/door/metalness.jpg', baseUrl).href)
-// const normalTexture = textureLoader.load(new URL('/textures/door/normal.jpg', baseUrl).href)
-// const roughnessTexture = textureLoader.load(new URL('/textures/door/roughness.jpg', baseUrl).href)
-
-// colorTexture.repeat.x = 2
-// colorTexture.repeat.y = 3
-// colorTexture.wrapS = THREE.MirroredRepeatWrapping
-// colorTexture.wrapT = THREE.MirroredRepeatWrapping
-
-// colorTexture.offset.x = 0.5
-// colorTexture.offset.y = 0.5
-
-// colorTexture.rotation = Math.PI / 4
-// colorTexture.center.x = 0.5
-// colorTexture.center.y = 0.5
-colorTexture.generateMipmaps = false
-colorTexture.minFilter = THREE.NearestFilter
-colorTexture.magFilter = THREE.NearestFilter
-
-/**
- * Debug
- */
-const gui = new dat.GUI({title: 'Debug'})
 
 
 declare global {
@@ -74,17 +34,6 @@ if (!canvas) throw new Error('Canvas not found')
 const scene = new THREE.Scene()
 
 /**
- * Object
- */
-const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ map: colorTexture , color: 0xff0000 })
-const mesh = new THREE.Mesh(geometry, material)
-scene.add(mesh)
-
-
-
-
-/**
  * Sizes
  */
 const sizes = {
@@ -112,9 +61,9 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 3
+camera.position.x = 1
 camera.position.y = 1
-camera.position.z = 1
+camera.position.z = 2
 scene.add(camera)
 
 // Controls
@@ -129,17 +78,19 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
 /**
  * Animate
  */
-
 const tick = () =>
 {
 
     // Update controls
     controls.update()
+
     // Render
     renderer.render(scene, camera)
+
 }
 
 ticker(tick,undefined,true)()
