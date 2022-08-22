@@ -135,10 +135,11 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 const tick = () =>
 {
+
     // Update controls
     controls.update()
     // Render
     renderer.render(scene, camera)
 }
 
-ticker(tick)()
+ticker(tick,undefined,true)()
