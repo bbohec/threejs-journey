@@ -3,67 +3,114 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { ticker } from "./tick/ticker"
 import {GUI} from "lil-gui"
-
-
-const debug = new GUI()
-
-/**
- * Textures
- */
-
-const textureLoader = new THREE.TextureLoader()
-
-const doorColorTexture = textureLoader.load('/textures/door/color.jpg')
-const doorAlphaTexture = textureLoader.load('/textures/door/alpha.jpg')
-const doorAmbientOcclusionTexture = textureLoader.load('/textures/door/ambientOcclusion.jpg')
-const doorHeightTexture = textureLoader.load('/textures/door/height.jpg')
-const doorNormalTexture = textureLoader.load('/textures/door/normal.jpg')
-const doorMetalnessTexture = textureLoader.load('/textures/door/metalness.jpg')
-const doorRoughnessTexture = textureLoader.load('/textures/door/roughness.jpg')
-const matcapTexture = textureLoader.load('/textures/matcaps/8.png')
-const gradientTexture = textureLoader.load('/textures/gradients/5.jpg')
-
-
-const cubeTextureLoader = new THREE.CubeTextureLoader()
-const environmentMapTexture = cubeTextureLoader.load([
-    '/textures/environmentMaps/1/px.jpg',
-    '/textures/environmentMaps/1/nx.jpg',
-    '/textures/environmentMaps/1/py.jpg',
-    '/textures/environmentMaps/1/ny.jpg',
-    '/textures/environmentMaps/1/pz.jpg',
-    '/textures/environmentMaps/1/nz.jpg'
-])
-
+import {FontLoader} from 'three/examples/jsm/loaders/FontLoader'
+import {TextGeometry} from 'three/examples/jsm/geometries/TextGeometry'
 
 declare global {
-    interface Document {
-      mozCancelFullScreen?: () => Promise<void>;
-      msExitFullscreen?: () => Promise<void>;
-      webkitExitFullscreen?: () => Promise<void>;
-      mozFullScreenElement?: Element;
-      msFullscreenElement?: Element;
-      webkitFullscreenElement?: Element;
-    }
-  
-    interface HTMLElement {
-      msRequestFullscreen?: () => Promise<void>;
-      mozRequestFullscreen?: () => Promise<void>;
-      webkitRequestFullscreen?: () => Promise<void>;
-    }
+  interface Document {
+    mozCancelFullScreen?: () => Promise<void>;
+    msExitFullscreen?: () => Promise<void>;
+    webkitExitFullscreen?: () => Promise<void>;
+    mozFullScreenElement?: Element;
+    msFullscreenElement?: Element;
+    webkitFullscreenElement?: Element;
   }
+
+  interface HTMLElement {
+    msRequestFullscreen?: () => Promise<void>;
+    mozRequestFullscreen?: () => Promise<void>;
+    webkitRequestFullscreen?: () => Promise<void>;
+  }
+}
 
 
 /**
  * Base
  */
-
 // Canvas
 const canvas:HTMLElement|null = document.querySelector('canvas.webgl')
 if (!canvas) throw new Error('Canvas not found')
 
+const debug = new GUI()
+
+
+
+
+
+const fontLoader = new FontLoader()
+fontLoader.load('/fonts/helvetiker_regular.typeface.json', font=> {
+  const textGeometry = new TextGeometry(
+    'Hello Three.js',{
+      font,
+      size:0.5,
+      height: 0.2,
+      curveSegments:10,
+      bevelEnabled:true,
+      bevelThickness:0.03,
+      bevelSize:0.02,
+      bevelOffset:0,
+      bevelSegments:10
+    }
+  )
+  // textGeometry.computeBoundingBox()
+  // if(textGeometry.boundingBox)
+  //   textGeometry.translate(
+  //     (textGeometry.boundingBox?.max.x + textGeometry.boundingBox?.min.x)*-0.5,
+  //     (textGeometry.boundingBox?.max.y + textGeometry.boundingBox?.min.y)*-0.5,
+  //     (textGeometry.boundingBox?.max.z + textGeometry.boundingBox?.min.z)*-0.5,
+  //   )
+  //   textGeometry.computeBoundingBox()
+  // console.log(textGeometry.boundingBox)
+  textGeometry.center()
+  const textMesh = new THREE.Mesh(textGeometry,matcapMaterial)
+  scene.add(textMesh)
+})
+
+
+
+
 // Scene
 const scene = new THREE.Scene()
 
+/**
+ * Textures
+ */
+const textureLoader = new THREE.TextureLoader()
+const matcapTexture = textureLoader.load("/textures/matcaps/8.png")
+
+
+/**
+ * Object
+ */
+// const cube = new THREE.Mesh(
+//     new THREE.BoxGeometry(1, 1, 1),
+//     new THREE.MeshBasicMaterial()
+// )
+console.time("0")
+const newLocal = new THREE.TorusGeometry(0.3, 0.2, 20, 45)
+const matcapMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture })
+for (let index = 0; index < 1000; index++) {
+  const donut = new THREE.Mesh(newLocal, matcapMaterial)
+  donut.position.set(
+    (Math.random()-0.5)*10,
+    (Math.random()-0.5)*10,
+    (Math.random()-0.5)*10,
+  )
+  donut.rotation.set(
+    Math.random()*Math.PI,
+    Math.random()*Math.PI,
+    0
+  )
+  const scale = Math.random()
+  donut.scale.set(scale,scale,scale)
+  scene.add(donut) 
+}
+console.timeEnd("0")
+
+
+// scene.add(cube)
+const axesHelper = new THREE.AxesHelper()
+scene.add(axesHelper)
 /**
  * Sizes
  */
@@ -105,99 +152,11 @@ controls.enableDamping = true
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
+    canvas: canvas,
+    antialias:true
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-
-
-const ambiantLight1 = new THREE.AmbientLight("white" , 0.5)
-scene.add(ambiantLight1)
-const pointLight = new THREE.PointLight("white", 0.3)
-pointLight.position.set(2, 3, 4)
-scene.add(pointLight)
-
-/**
- * Object
- */
-
-// const material = new THREE.MeshBasicMaterial()
-// material.map = doorColorTexture
-// material.wireframe = true
-// material.color.set(0x66ff66)
-// material.opacity = 0.5
-// material.transparent = true
-// material.alphaMap = doorAlphaTexture
-// material.side = THREE.DoubleSide
-
-// MESH NORMAL MATERIAL COMMONLY USED TO DEBUG NORMALS
-// const material = new THREE.MeshNormalMaterial()
-// material.flatShading = true
-
-// Simulate Light & Shadow without having light in the scene
-// const material = new THREE.MeshMatcapMaterial()
-// material.matcap = matcapTexture
-
-// const material = new THREE.MeshDepthMaterial()
-
-// Performante rendering with light and shadow effect
-//const material = new THREE.MeshLambertMaterial()
-
-// Less performant rendering but better lighting quality
-// const material = new THREE.MeshPhongMaterial()
-// material.shininess = 1000
-// material.specular.set(0xffffff)
-
-// For cartoon cell shading effect
-// const material = new THREE.MeshToonMaterial()
-// gradientTexture.minFilter = THREE.NearestFilter
-// gradientTexture.magFilter = THREE.NearestFilter
-// gradientTexture.generateMipmaps = false
-// material.gradientMap = gradientTexture
-
-// const material = new THREE.MeshStandardMaterial()
-// material.metalness = 0.45
-// material.roughness = 0.65
-// material.map = doorColorTexture
-// material.aoMap = doorAmbientOcclusionTexture
-// material.aoMapIntensity = 1
-// material.displacementMap = doorHeightTexture
-// material.displacementScale = 0.05
-// material.metalnessMap = doorMetalnessTexture
-// material.roughnessMap = doorRoughnessTexture
-// material.normalMap = doorNormalTexture
-// material.normalScale.set(0.5, 0.5)
-// material.alphaMap = doorAlphaTexture
-// material.transparent = true
-
-
-const material = new THREE.MeshStandardMaterial()
- material.metalness = 0.914
- material.roughness = 0.0
- material.envMap = environmentMapTexture
-
-
-const folder = debug.addFolder('material')
-folder.add(material, 'metalness', 0, 1).step(0.0001)
-folder.add(material,"roughness",0,1).step(0.0001)
-folder.add(material,"aoMapIntensity",0,3).step(0.0001)
-folder.add(material,"displacementScale",0,1).step(0.0001)
-
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 64, 64), material)
-const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1,100,100), material)
-const torus = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.1, 64, 120), material)
-
-scene.add(sphere,plane,torus)
-sphere.position.x = -1.5
-torus.position.x = 1.5
-
-const meshs = [sphere,plane,torus]
-
-
-// APPLY UV COOORDINATES TO MESH
-sphere.geometry.setAttribute('uv2', new THREE.BufferAttribute(sphere.geometry.attributes.uv.array, 2))
-plane.geometry.setAttribute('uv2', new THREE.BufferAttribute(plane.geometry.attributes.uv.array, 2))
-torus.geometry.setAttribute('uv2', new THREE.BufferAttribute(torus.geometry.attributes.uv.array, 2))
 
 /**
  * Animate
@@ -207,12 +166,6 @@ const tick = () =>
 {
     const delta = clock.getElapsedTime()
 
-    // Update objects
-    meshs.forEach(mesh =>{
-      mesh.rotation.y = 0.8*delta
-      mesh.rotation.x = 0.3*delta
-    })
-
     // Update controls
     controls.update()
 
@@ -221,4 +174,4 @@ const tick = () =>
 
 }
 
-ticker(tick,undefined,false)()
+ticker(tick,undefined,true)()
