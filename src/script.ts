@@ -22,8 +22,11 @@ declare global {
     webkitRequestFullscreen?: () => Promise<void>;
   }
 }
-const helvetikerRegularFontUrl =  new URL('/fonts/helvetiker_regular.typeface.json', import.meta.url)
 
+
+const baseUrl = new URL(import.meta.env.BASE_URL,import.meta.url )
+const helvetikerRegularFontUrl =  `${baseUrl.href}fonts/helvetiker_regular.typeface.json`
+const matCapTextureUrl = `${baseUrl.href}textures/matcaps/8.png` 
 
 /**
  * Base
@@ -39,7 +42,7 @@ const debug = new GUI()
 
 
 const fontLoader = new FontLoader()
-fontLoader.load(helvetikerRegularFontUrl.href, font=> {
+fontLoader.load(helvetikerRegularFontUrl, font=> {
   const textGeometry = new TextGeometry(
     'Hello Three.js',{
       font,
@@ -77,8 +80,7 @@ const scene = new THREE.Scene()
  * Textures
  */
 const textureLoader = new THREE.TextureLoader()
-const matCapTextureUrl = new URL("/textures/matcaps/8.png", import.meta.url) 
-const matcapTexture = textureLoader.load(matCapTextureUrl.href)
+const matcapTexture = textureLoader.load(matCapTextureUrl)
 
 
 /**
@@ -176,4 +178,4 @@ const tick = () =>
 
 }
 
-ticker(tick,undefined,true)()
+ticker(tick,undefined,false)()
