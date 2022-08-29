@@ -91,21 +91,21 @@ const matcapTexture = textureLoader.load(matCapTextureUrl)
 //     new THREE.MeshBasicMaterial()
 // )
 console.time("0")
-const torusGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45)
+const torusGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 20)
 const matcapMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture })
 for (let index = 0; index < 1000; index++) {
   const donut = new THREE.Mesh(torusGeometry, matcapMaterial)
   donut.position.set(
-    (Math.random()-0.5)*10,
-    (Math.random()-0.5)*10,
-    (Math.random()-0.5)*10,
+    (Math.random()-0.5)*50,
+    (Math.random()-0.5)*50,
+    (Math.random()-0.5)*50,
   )
   donut.rotation.set(
     Math.random()*Math.PI,
     Math.random()*Math.PI,
     0
   )
-  const scale = Math.random()
+  const scale = Math.log(Math.random() * 3 )
   donut.scale.set(scale,scale,scale)
   scene.add(donut) 
 }
