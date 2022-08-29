@@ -25,8 +25,8 @@ declare global {
 
 
 const baseUrl = new URL(import.meta.env.BASE_URL,import.meta.url )
-const helvetikerRegularFontUrl =  `${baseUrl.href}fonts/helvetiker_regular.typeface.json`
-const matCapTextureUrl = `${baseUrl.href}textures/matcaps/8.png` 
+const helvetikerRegularFontUrl =  new URL(`fonts/helvetiker_regular.typeface.json`,baseUrl.href)
+const matCapTextureUrl = new URL(`textures/matcaps/8.png`,baseUrl.href)
 
 /**
  * Base
@@ -42,7 +42,7 @@ const debug = new GUI()
 
 
 const fontLoader = new FontLoader()
-fontLoader.load(helvetikerRegularFontUrl, font=> {
+fontLoader.load(helvetikerRegularFontUrl.href, font=> {
   const textGeometry = new TextGeometry(
     'Hello Three.js',{
       font,
@@ -80,7 +80,7 @@ const scene = new THREE.Scene()
  * Textures
  */
 const textureLoader = new THREE.TextureLoader()
-const matcapTexture = textureLoader.load(matCapTextureUrl)
+const matcapTexture = textureLoader.load(matCapTextureUrl.href)
 
 
 /**
