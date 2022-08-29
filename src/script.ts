@@ -22,6 +22,7 @@ declare global {
     webkitRequestFullscreen?: () => Promise<void>;
   }
 }
+const helvetikerRegularFontUrl =  new URL('/fonts/helvetiker_regular.typeface.json', import.meta.url)
 
 
 /**
@@ -38,7 +39,7 @@ const debug = new GUI()
 
 
 const fontLoader = new FontLoader()
-fontLoader.load('/fonts/helvetiker_regular.typeface.json', font=> {
+fontLoader.load(helvetikerRegularFontUrl.href, font=> {
   const textGeometry = new TextGeometry(
     'Hello Three.js',{
       font,
@@ -76,7 +77,8 @@ const scene = new THREE.Scene()
  * Textures
  */
 const textureLoader = new THREE.TextureLoader()
-const matcapTexture = textureLoader.load("/textures/matcaps/8.png")
+const matCapTextureUrl = new URL("/textures/matcaps/8.png", import.meta.url) 
+const matcapTexture = textureLoader.load(matCapTextureUrl.href)
 
 
 /**
@@ -87,10 +89,10 @@ const matcapTexture = textureLoader.load("/textures/matcaps/8.png")
 //     new THREE.MeshBasicMaterial()
 // )
 console.time("0")
-const newLocal = new THREE.TorusGeometry(0.3, 0.2, 20, 45)
+const torusGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45)
 const matcapMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture })
 for (let index = 0; index < 1000; index++) {
-  const donut = new THREE.Mesh(newLocal, matcapMaterial)
+  const donut = new THREE.Mesh(torusGeometry, matcapMaterial)
   donut.position.set(
     (Math.random()-0.5)*10,
     (Math.random()-0.5)*10,
